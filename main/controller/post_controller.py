@@ -11,18 +11,20 @@ from ..service.post_service import (
 )
 from ..util.post_dto import PostDto
 from marshmallow import ValidationError
-
+from ..service.token_service import token_required
 post_namespace = PostDto.post_namespace
 
 
 @post_namespace.route("/get/<int:id>")
 class getPost(Resource):
+    @token_required
     @post_namespace.doc(security="api_key")
     def get(self, id):
         return getPostById(id)
 
 @post_namespace.route("/getAll")
 class getPostList(Resource):
+    @token_required
     @post_namespace.doc(security="api_key")
     def get(self):
         return getAllPost()
@@ -31,6 +33,7 @@ class getPostList(Resource):
 @post_namespace.route("/create")
 @post_namespace.expect(PostDto.post)
 class createPost(Resource):
+    @token_required
     @post_namespace.doc(security="api_key")
     def post(self):
 
@@ -48,6 +51,7 @@ class createPost(Resource):
 
 @post_namespace.route("/delete/<int:id>")
 class deletePost(Resource):
+    @token_required
     @post_namespace.doc(security="api_key")
     def delete(self, id):
         try:
@@ -60,6 +64,7 @@ class deletePost(Resource):
 @post_namespace.route("/update/<int:id>")
 @post_namespace.expect(PostDto.post)
 class updatePost(Resource):
+    @token_required
     @post_namespace.doc(security="api_key")
     def put(self, id):
         try:

@@ -11,18 +11,21 @@ from ..service.user_service import (
 )
 from ..util.user_dto import UserDto
 from marshmallow import ValidationError
+from ..service.token_service import token_required
 
 user_namespace = UserDto.user_namespace
 
 
 @user_namespace.route("/get/<int:id>")
 class getUser(Resource):
+    @token_required
     @user_namespace.doc(security="api_key")
     def get(self, id):
         return getUserById(id)
 
 @user_namespace.route("/getAll")
 class getUserList(Resource):
+    @token_required
     @user_namespace.doc(security="api_key")
     def get(self):
         return getAllUser()
@@ -31,6 +34,7 @@ class getUserList(Resource):
 @user_namespace.route("/create")
 @user_namespace.expect(UserDto.user)
 class createUser(Resource):
+    @token_required
     @user_namespace.doc(security="api_key")
     def post(self):
 
@@ -48,6 +52,7 @@ class createUser(Resource):
 
 @user_namespace.route("/delete/<int:id>")
 class deleteUser(Resource):
+    @token_required
     @user_namespace.doc(security="api_key")
     def delete(self, id):
         try:
@@ -60,6 +65,7 @@ class deleteUser(Resource):
 @user_namespace.route("/update/<int:id>")
 @user_namespace.expect(UserDto.user)
 class updateUser(Resource):
+    @token_required
     @user_namespace.doc(security="api_key")
     def put(self, id):
         try:
