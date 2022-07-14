@@ -1,6 +1,6 @@
 from cgitb import reset
 import imp
-from flask import Flask
+from flask import Flask,render_template
 from flask_restx import Api
 from main.model.db_model import User, db
 from sqlalchemy import event
@@ -18,6 +18,13 @@ from decouple import config
 from flask_mail_sendgrid import MailSendGrid
 
 app = Flask(__name__)  # Create a Flask WSGI application
+
+@app.route('/resetpassword')
+def hello_world():
+   
+   return render_template('index.html')
+
+
 CORS(app)
 
 # Data Base
@@ -31,6 +38,8 @@ db.init_app(app)
 app.config["MAIL_SENDGRID_API_KEY"] = config("MAIL_SENDGRID_API_KEY")
 app.config["MAIL_SENDER"] = config("MAIL_SENDER")
 mail = MailSendGrid(app)
+
+
 
 # Api
 authorizations = {
@@ -69,3 +78,6 @@ def receive_after_create(target, connection, **kw):
             )
         )
         db.session.commit()
+
+
+   
