@@ -132,6 +132,17 @@ def updateOTPByEmail(email, otp):
     finally:
         db.session.close()
 
+def saveTokenByEmail(email,token):
+    user = User.query.filter_by(email=email).first()
+    user.token= token
+    db.session.commit()
+    # try:
+    #     db.session.commit()
+    # except Exception:
+    #     db.session.rollback()
+    #     raise Exception("Common error")
+    # finally:
+    #     db.session.close()
 
 def deleteById(deleteId):
     user = User.query.get(deleteId)

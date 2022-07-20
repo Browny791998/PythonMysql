@@ -1,9 +1,12 @@
 from cgitb import reset
 import imp
-from flask import Flask,render_template
+from flask import Flask, redirect,render_template, request
 from flask_restx import Api
 from main.model.db_model import User, db
 from sqlalchemy import event
+from flask import current_app
+
+import jwt
 # from sqlalchemy import event
 from main.controller.user_controller import user_namespace
 from main.controller.post_controller import post_namespace
@@ -20,9 +23,18 @@ from flask_mail_sendgrid import MailSendGrid
 app = Flask(__name__)  # Create a Flask WSGI application
 
 @app.route('/resetpassword')
-def hello_world():
-   
+def reset_password():
+   email = request.args.get("email")
+   token = request.args.get("token")
    return render_template('index.html')
+#    new_token = jwt.encode(
+#              {"email": email},
+#             current_app.config["SECRET_KEY"],
+#                )
+#    if token == new_token:
+#        return render_template('index.html')
+#    else:
+#        return redirect('/')
 
 
 CORS(app)
@@ -75,6 +87,7 @@ def receive_after_create(target, connection, **kw):
                 updated_at="2016-03-13 02:32:21",
                 deleted_at="2016-03-13 02:32:21",
                 otp_number="",
+                token=""
             )
         )
         db.session.commit()

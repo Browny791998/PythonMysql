@@ -56,7 +56,7 @@ def checkUserExist(email):
 
 
 def resetPassword(email, newPassword, confirmpassword):
-
+    print(email)
     if newPassword != confirmpassword:
         raise InvalidAccessErr("mismatch password")
     try:
@@ -67,7 +67,7 @@ def resetPassword(email, newPassword, confirmpassword):
 
 def createOTP(email):
     otpNumber = generateOTP()
-
+    
     updateOTPByEmail(email, otpNumber)
     sendEmail(email, otpNumber)
 
@@ -92,4 +92,8 @@ def checkOTP(email, otp):
     user= getUserByEmail(email)
     if user["otp_number"] != otp:
         raise ValueError("Otp is Invalid")
+
+
+   
+
 

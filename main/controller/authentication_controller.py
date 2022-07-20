@@ -2,6 +2,8 @@ import json
 from wsgiref import headers
 from flask_restx import Resource
 from flask import request,render_template,make_response
+
+
 from ..util.login_dto import LoginDto
 import os
 from sendgrid import SendGridAPIClient
@@ -13,6 +15,10 @@ from ..service.authentication_service import (
     resetPassword,
     createOTP,
     checkOTP,
+)
+
+from ..service.user_service import(
+    saveTokenByEmail
 )
 from xml.dom import NotFoundErr, InvalidAccessErr
 
@@ -56,20 +62,21 @@ class RetrieveEmail(Resource):
             token = jwt.encode(
              {"email": email},
             current_app.config["SECRET_KEY"],
-               )
+            algorithm="HS256",)
+            saveTokenByEmail(email,token)
             # save otp number
-            message = Mail(
-                 from_email='scm.yehtetaung@gmail.com',
-                 to_emails=email,
+            # message = Mail(
+            #      from_email='scm.yehtetaung@gmail.com',
+            #      to_emails=email,
                  
-                 subject='Sending with Twilio SendGrid is Fun',
-                 html_content=f'<strong>Reset password link</strong><a href="http://127.0.0.1:5000/resetpassword?email={email}&token={token}">Click here</a>')
-            try:
-                sg = SendGridAPIClient('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')
-                response = sg.send(message)
-                print(token)
-            except Exception as e:
-                print(e.message)
+            #      subject='Sending with Twilio SendGrid is Fun',
+            #      html_content=f'<strong>Reset password link</strong><a href="http://127.0.0.1:5000/resetpassword?email={email}&token={token}">Click here</a>')
+            # try:
+            #     sg = SendGridAPIClient('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')
+            #     response = sg.send(message)
+            #     print(token)
+            # except Exception as e:
+            #     print(e.message)
             
             # createOTP(email)
             
@@ -78,7 +85,7 @@ class RetrieveEmail(Resource):
         except NotFoundErr as e:
             return e.args, 401
 
-        return {"message": "email exist", "email": email}
+        return {"message": "email exist", "email": email,"token":token}
         
 
 
@@ -88,14 +95,18 @@ class ResetEmail(Resource):
     def post(self):
         try:
             resetData = json.loads(request.data)
-            email = resetData["email"]
-            otpNumber = resetData["otpnumber"]
+            token = resetData["token"]
             newPassword = resetData["newpassword"]
             confirmpassword = resetData["confirmpassword"]
+            data = jwt.decode(
+                token,current_app.config["SECRET_KEY"], algorithms=["HS256"]
+            )
+            checkUserExist(data['email'])
+            email = data['email']
+            resetPassword(email,newPassword,confirmpassword)
+            # checkToken(email, token)
 
-            checkOTP(email, otpNumber)
-
-            resetPassword(email, newPassword, confirmpassword)
+            # resetPassword(email, newPassword, confirmpassword)
 
         except InvalidAccessErr as e:
             return e.args, 401

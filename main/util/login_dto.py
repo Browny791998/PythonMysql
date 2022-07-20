@@ -20,9 +20,10 @@ class LoginDto:
     reset_request = reset_password_namespace.model(
         "Reset",
         {
-            "email": fields.String(),
+            # "email": fields.String(),
             "newpassword": fields.String(),
             "confirmpassword": fields.String(),
-            "otpnumber": fields.String(),
+            # "otpnumber": fields.String(),
+            "token":fields.String()
         },
     )

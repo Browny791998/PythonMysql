@@ -1,3 +1,4 @@
+from attr import field
 from flask_sqlalchemy import SQLAlchemy
 from marshmallow import Schema, fields, validate
 from ..constant import common_constant
@@ -21,6 +22,7 @@ class User(db.Model):
     updated_at = db.Column(db.DateTime(), nullable=False)
     deleted_at = db.Column(db.DateTime())
     otp_number = db.Column(db.String(100))
+    token = db.Column(db.String())
     join_date = db.Column(db.Date())
     period = db.Column(db.String(100))
     tech_skill = db.Column(db.String(100))
@@ -56,6 +58,7 @@ class UserSchema(Schema):
     updated_at = fields.DateTime(common_constant.DATE_TIME_FORMAT)
     deleted_at = fields.DateTime(common_constant.DATE_TIME_FORMAT)
     otp_number = fields.String()
+    token = fields.String()
     join_date = fields.Date()
     period = fields.String()
     tech_skill = fields.String()
@@ -75,6 +78,7 @@ class UserSchema(Schema):
             "updated_at",
             "deleted_at",
             "otp_number",
+            "token",
             "join_date",
             "period",
             "tech_skill",
